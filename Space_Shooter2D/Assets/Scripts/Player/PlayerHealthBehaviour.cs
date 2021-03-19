@@ -20,15 +20,15 @@ public class PlayerHealthBehaviour : MonoBehaviour
 
     private void DecreaseHealthCount()
     {
-        if (_currentHealthCount > 0)
-        {
-            _currentHealthCount--;
+        _currentHealthCount--;
 
+        if (_currentHealthCount >= 0)
+        {
             HUDEvents.OnUpdateHealthHUD(_currentHealthCount);
         }
         else
         {
-            //call player died
+            PlayerEvents.OnPlayerDied();
         }
     }
 
@@ -37,6 +37,7 @@ public class PlayerHealthBehaviour : MonoBehaviour
         if (collision.CompareTag(ObstacleTag))
         {
             DecreaseHealthCount();
+            ObjectPoolEvents.OnReturnObstacleToPool(collision.gameObject);
         }
     }
 }

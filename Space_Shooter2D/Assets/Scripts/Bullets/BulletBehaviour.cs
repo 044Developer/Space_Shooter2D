@@ -32,8 +32,9 @@ public class BulletBehaviour : MonoBehaviour
         if (collision.CompareTag(ObstacleTag))
         {
             //Do Particle
-            // Return Obstacle To Pool
-            ObjectPoolEvents.OnReturnToPool(this.gameObject);
+            HUDEvents.OnApplyNewScore(transform.position);
+            ObjectPoolEvents.OnReturnObstacleToPool(collision.gameObject);
+            ObjectPoolEvents.OnReturnBulletToPool(this.gameObject);
         } 
     }
 }

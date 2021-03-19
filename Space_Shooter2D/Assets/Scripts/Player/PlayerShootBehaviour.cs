@@ -17,7 +17,7 @@ public class PlayerShootBehaviour : MonoBehaviour
 
     private void SubscribeEvents()
     {
-        ObjectPoolEvents.ReturnToPool += ReturnBulletToPool;
+        ObjectPoolEvents.ReturnBulletToPool += ReturnBulletToPool;
     }
 
     private void Start()
@@ -58,6 +58,6 @@ public class PlayerShootBehaviour : MonoBehaviour
 
     private void UnsubscribeEvents()
     {
-        ObjectPoolEvents.ReturnToPool -= ReturnBulletToPool;
+        ObjectPoolEvents.ReturnBulletToPool -= ReturnBulletToPool;
     }
 }

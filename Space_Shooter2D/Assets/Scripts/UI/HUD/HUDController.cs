@@ -5,16 +5,27 @@ using UnityEngine;
 
 public class HUDController : MonoBehaviour
 {
+    [Header("Tap To Start Game")]
+    [SerializeField]
+    private Button _startGameButton;
+
     [Header("Score Settings")]
     [SerializeField]
     private ScoreHUDData _scoreData;
+
     [Space]
     [Header("Health Settings")]
     [SerializeField]
     private HealthHUDData _healthData;
 
+    [Space]
+    [Header("Pause Menu Data")]
+    [SerializeField]
+    private PauseHUDData _pauseData;
+
     private HealthDisplayController _healthController;
     private ScoreController _scoreController;
+    private PauseHUDController _pauseController;
     private Queue<Image> _animatedScorePool = new Queue<Image>();
 
     private void OnEnable()
@@ -26,12 +37,15 @@ public class HUDController : MonoBehaviour
     {
         HUDEvents.ApplyNewScore += ApplyNewScore;
         HUDEvents.UpdateHealthHUD += UpdateHealth;
+        PlayerEvents.PlayerDied += _pauseController.OpenDiePanel;
+        _startGameButton.onClick.AddListener(() => StartGameByButton());
     }
 
     private void Awake()
     {
         _scoreController = new ScoreController(_scoreData);
         _healthController = new HealthDisplayController(_healthData);
+        _pauseController = new PauseHUDController(_pauseData);
     }
 
     private void Start()
@@ -47,6 +61,13 @@ public class HUDController : MonoBehaviour
             scoreImage.gameObject.SetActive(false);
             _animatedScorePool.Enqueue(scoreImage);
         }
+    }
+
+    private void StartGameByButton()
+    {
+        _startGameButton.gameObject.SetActive(false);
+        GameEvents.OnStartGame();
+        GameEvents.OnResumeGame();
     }
 
     private void ApplyNewScore(Vector2 fromPosition)
@@ -68,5 +89,6 @@ public class HUDController : MonoBehaviour
     {
         HUDEvents.ApplyNewScore -= ApplyNewScore;
         HUDEvents.UpdateHealthHUD -= UpdateHealth;
+        PlayerEvents.PlayerDied -= _pauseController.OpenDiePanel;
     }
 }
