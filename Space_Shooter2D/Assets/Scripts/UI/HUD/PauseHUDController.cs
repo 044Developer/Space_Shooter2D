@@ -12,6 +12,13 @@ public class PauseHUDController
         InitializeButtons();
     }
 
+    public void OpenWinPanel()
+    {
+        _pauseData.PausePanel.SetActive(true);
+        _pauseData.YouWonText.gameObject.SetActive(true);
+        GameEvents.OnPauseGame();
+    }
+
     public void OpenDiePanel()
     {
         _pauseData.PausePanel.SetActive(true);
@@ -44,6 +51,7 @@ public class PauseHUDController
     private void ClosePausePanel()
     {
         _pauseData.PausePanel.SetActive(false);
+        _pauseData.YouWonText.gameObject.SetActive(false);
         _pauseData.ResumeButton.gameObject.SetActive(false);
         GameEvents.OnResumeGame();
     }

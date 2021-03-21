@@ -17,6 +17,6 @@ public class PlayerController
 
     public void ApplyPlayerMovement(float horizontalInput)
     {
-        _rigidbody.MovePosition(new Vector2(_playerTransform.position.x + horizontalInput * _playerMoveData.SideMoveSpeed * Time.deltaTime, _playerTransform.position.y)); ;
+        _rigidbody.MovePosition(new Vector2(_playerTransform.position.x + horizontalInput * _playerMoveData.SideMoveSpeed * Time.deltaTime, _playerTransform.position.y));
     }
 }

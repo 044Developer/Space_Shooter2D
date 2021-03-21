@@ -14,7 +14,21 @@ public class LevelController : MonoBehaviour
     private Queue<GameObject> _shuffledObstaclePool = new Queue<GameObject>();
     private Queue<Transform> _spawnPointPool = new Queue<Transform>();
 
+    public void SetLevelSettings(LevelSettingsData levelData)
+    {
+        _currentLevelSettings.InitializeLevelSettings(levelData);
+        CreateObstacleList();
+        ShuffleObstaclesToPool();
+
+        StartGameLoop();
+    }
+
     private void OnEnable()
+    {
+        SubscribeEvents();
+    }
+
+    private void SubscribeEvents()
     {
         ObjectPoolEvents.ReturnObstacleToPool += ReturnObstacleToPool;
     }
@@ -32,15 +46,6 @@ public class LevelController : MonoBehaviour
         }
     }
 
-    public void SetLevelSettings(LevelSettingsData levelData)
-    {
-        _currentLevelSettings.InitializeLevelSettings(levelData);
-        CreateObstacleList();
-        ShuffleObstaclesToPool();
-
-        StartGameLoop();
-    }
-
     private void StartGameLoop()
     {
         StartCoroutine(GameLevelLoop());
@@ -48,7 +53,7 @@ public class LevelController : MonoBehaviour
 
     private IEnumerator GameLevelLoop()
     {
-        var randomSpawnCount = UnityEngine.Random.Range(1, 4);
+        var randomSpawnCount = UnityEngine.Random.Range(1, _currentLevelSettings.MaxObjectsSpawnedPerPool + 1);
         for (int i = 0; i < randomSpawnCount; i++)
         {
             SpawnObstacle();
@@ -115,6 +120,11 @@ public class LevelController : MonoBehaviour
     }
 
     private void OnDisable()
+    {
+        UnsubscribeEvents();
+    }
+
+    private void UnsubscribeEvents()
     {
         ObjectPoolEvents.ReturnObstacleToPool -= ReturnObstacleToPool;
     }

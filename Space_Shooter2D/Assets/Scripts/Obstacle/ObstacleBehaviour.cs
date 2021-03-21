@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UniRx;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class ObstacleBehaviour : MonoBehaviour
@@ -13,11 +14,17 @@ public class ObstacleBehaviour : MonoBehaviour
 
     private void Awake()
     {
+        InitializeComponents();
+    }
+
+    private void InitializeComponents()
+    {
         _rigidbody = GetComponent<Rigidbody2D>();
     }
 
     private void Start()
     {
+        CreateFixedUpdateStream();
         InitializeRotationSpeed();
     }
 
@@ -26,9 +33,9 @@ public class ObstacleBehaviour : MonoBehaviour
         _currentRotation = _obstacleData.RotationSpeed;
     }
 
-    private void FixedUpdate()
+    private void CreateFixedUpdateStream()
     {
-        MoveObstacle();
+        Observable.EveryFixedUpdate().Subscribe(_ => MoveObstacle()).AddTo(this);
     }
 
     private void MoveObstacle()

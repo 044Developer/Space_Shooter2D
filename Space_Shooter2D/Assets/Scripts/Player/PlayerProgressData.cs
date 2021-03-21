@@ -7,9 +7,9 @@ using System;
 public class PlayerProgressData 
 {
     public const string Directory = "SaveData";
-    public const string FileName = "LevelProgressData.txt";
+    public const string FileName = "ProgressData.txt";
 
     public string DirectoryPath { get => Directory; }
     public string FileNamePath { get => FileName; }
-    public int CurrentScore { get; set; }
+    public int TotalScore { get; set; }
 }

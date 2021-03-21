@@ -9,36 +9,23 @@ public class GameManager : MonoBehaviour
     private const int GameResumed = 1;
     private const string MainMenuScene = "MainMenu";
 
-    private static int currentLevelID;
-
-    public int GetCurrentLevelID()
-    {
-        return currentLevelID;
-    }
-
     private void OnEnable()
     {
-        SubscribeEvents();   
-    }
-
-    private void Start()
-    {
-        PauseGame();
+        SubscribeEvents();
     }
 
     private void SubscribeEvents()
     {
         GameEvents.ResumeGame += ResumeGame;
         GameEvents.PauseGame += PauseGame;
-        GameEvents.SpawnLevel += InitializeLevelID;
         SceneEvents.ReloadScene += ReloadScene;
         SceneEvents.LoadMainMenu += LoadMainMenu;
         SceneEvents.LoadLevelScene += LoadLevelScene;
     }
 
-    private void InitializeLevelID(int id)
+    private void Start()
     {
-        currentLevelID = id;
+        PauseGame();
     }
 
     private void PauseGame()
@@ -85,7 +72,6 @@ public class GameManager : MonoBehaviour
     {
         GameEvents.ResumeGame -= ResumeGame;
         GameEvents.PauseGame -= PauseGame;
-        GameEvents.SpawnLevel -= InitializeLevelID;
         SceneEvents.ReloadScene -= ReloadScene;
         SceneEvents.LoadMainMenu -= LoadMainMenu;
         SceneEvents.LoadLevelScene -= LoadLevelScene;

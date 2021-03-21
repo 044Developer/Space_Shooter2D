@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UniRx;
+using System;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerMoveBehaviour : MonoBehaviour
@@ -21,17 +23,16 @@ public class PlayerMoveBehaviour : MonoBehaviour
     private void InitializeComponents()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
+        _playerController = new PlayerController(_playerMoveData, this.transform, _rigidbody);
     }
 
     private void Start()
     {
-        _playerController = new PlayerController(_playerMoveData, this.transform, _rigidbody);
+        CreateFixedUpdateStream();
     }
 
-    private void FixedUpdate()
+    private void CreateFixedUpdateStream()
     {
-        float horizontalMovement = Input.GetAxis(HorizontalInput);
-
-        _playerController.ApplyPlayerMovement(horizontalMovement);
+        Observable.EveryFixedUpdate().Select(_ => Input.GetAxis(HorizontalInput)).Subscribe(input => _playerController.ApplyPlayerMovement(input)).AddTo(this);
     }
 }

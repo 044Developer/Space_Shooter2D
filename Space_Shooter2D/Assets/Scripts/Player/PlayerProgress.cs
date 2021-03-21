@@ -1,9 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerProgress : MonoBehaviour
 {
+    private const string TotalScorePath = "TotalScore";
+
     public PlayerProgressData ProgressData;
 
     private void OnEnable()
@@ -11,24 +11,33 @@ public class PlayerProgress : MonoBehaviour
         LoadData();
     }
 
-    private void SubscribeEvents()
+    private void Start()
     {
-        PlayerEvents.SaveProgressData += SaveData;
+        UpdateTotalResult();
+    }
+
+    private void UpdateTotalResult()
+    {
+        if (ProgressData != null)
+        {
+            ProgressData.TotalScore += PlayerPrefs.GetInt(TotalScorePath);
+            PlayerPrefs.DeleteKey(TotalScorePath);
+        }
     }
 
     private void SaveData()
     {
+        if (ProgressData == null)
+        {
+            ProgressData = new PlayerProgressData();
+        }
+
         SaveDataManager.Save(ProgressData, ProgressData.DirectoryPath, ProgressData.FileNamePath);
     }
 
     private void LoadData()
     {
         ProgressData = SaveDataManager.Load<PlayerProgressData>(ProgressData.DirectoryPath, ProgressData.FileNamePath);
-    }
-
-    private void UnsubscribeEvents()
-    {
-        PlayerEvents.SaveProgressData -= SaveData;
     }
 
     private void OnDisable()

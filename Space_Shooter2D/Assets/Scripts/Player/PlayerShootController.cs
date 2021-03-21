@@ -5,7 +5,6 @@ using UnityEngine;
 public class PlayerShootController 
 {
     private PlayerShootData _shootData;
-    private float _timer;
 
     public PlayerShootController(PlayerShootData shootData)
     {
@@ -18,17 +17,5 @@ public class PlayerShootController
         bullet.transform.position = _shootData.PlayerShootPosition.position;
         bullet.SetActive(true);
         bullet.transform.SetParent(null);
-
-        _timer = 0f;
-    }
-
-    public bool CanShoot()
-    {
-        if (_timer < _shootData.PlayerShootRate)
-        {
-            _timer += Time.deltaTime;
-            return false;
-        }
-        return true;
     }
 }

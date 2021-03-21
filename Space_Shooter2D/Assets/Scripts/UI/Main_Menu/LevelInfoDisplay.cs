@@ -27,7 +27,7 @@ public class LevelInfoDisplay : MonoBehaviour
     private Button _startLevelButton;
 
     [SerializeField]
-    private PlayerProgressData _progressData;
+    private PlayerProgress _progressData;
 
     private int _currentLevelIndex;
 
@@ -38,20 +38,30 @@ public class LevelInfoDisplay : MonoBehaviour
 
     private void InitializeLevelDisplay()
     {
+        if (_progressData.ProgressData == null)
+        {
+            _progressData.ProgressData = new PlayerProgressData();
+        }
+
         for (int i = 0; i < _levelInfo.Count; i++)
         {
-            _levelInfo[i].CurrentPointsCount = _progressData.CurrentScore;
-            int index = i;
-            Button button = Instantiate(_levelButtonPrefab, _levelButtonHolder);
-            button.onClick.AddListener(() => _infoPanel.SetActive(true));
-            button.onClick.AddListener(() => _levelInfo[index].DisplayLevelInfo(_levelName, _levelObjective));
-            button.onClick.AddListener(() => SetCurrentLevelIndex(index));
-            _levelInfo[index].DisplayButtonName(button.GetComponentInChildren<TextMeshProUGUI>());
-            button.enabled = _levelInfo[index].IsOpened;
+            InitializeEachButton(i);
         }
 
         _startLevelButton.onClick.AddListener(() => LoadLevelScene());
         _closeInfoPanelButton.onClick.AddListener(() => _infoPanel.SetActive(false));
+    }
+
+    private void InitializeEachButton(int atIndex)
+    {
+        _levelInfo[atIndex].CurrentPointsCount = _progressData.ProgressData.TotalScore;
+        Button button = Instantiate(_levelButtonPrefab, _levelButtonHolder);
+        button.onClick.AddListener(() => _infoPanel.SetActive(true));
+        button.onClick.AddListener(() => _levelInfo[atIndex].DisplayLevelInfo(_levelName, _levelObjective));
+        button.onClick.AddListener(() => SetCurrentLevelIndex(atIndex));
+        _levelInfo[atIndex].DisplayButtonName(button.GetComponentInChildren<TextMeshProUGUI>());
+        _levelInfo[atIndex].IsOpened = _progressData.ProgressData.TotalScore >= _levelInfo[atIndex].PointsNeeded;
+        button.enabled = _levelInfo[atIndex].IsOpened;
     }
 
     private void SetCurrentLevelIndex(int index)
@@ -61,7 +71,7 @@ public class LevelInfoDisplay : MonoBehaviour
 
     private void LoadLevelScene()
     {
-        GameEvents.OnSpawnLevel(_levelInfo[_currentLevelIndex].LevelID);
+        PlayerPrefs.SetInt("CurrentLevelID", _levelInfo[_currentLevelIndex].LevelID);
         SceneEvents.OnLoadLevelScene(_levelInfo[_currentLevelIndex].LevelName);
     }
 }

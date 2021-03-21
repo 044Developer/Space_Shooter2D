@@ -9,9 +9,6 @@ public static class GameEvents
     public static event GameStatus ResumeGame;
     public static event GameStatus PauseGame;
 
-    public delegate void LevelID (int id);
-    public static event LevelID SpawnLevel;
-
     public static void OnStartGame()
     {
         StartGame?.Invoke();
@@ -25,11 +22,6 @@ public static class GameEvents
     public static void OnPauseGame()
     {
         PauseGame?.Invoke();
-    }
-
-    public static void OnSpawnLevel(int id)
-    {
-        SpawnLevel?.Invoke(id);
     }
 }
 
@@ -62,9 +54,19 @@ public static class PlayerEvents
 {
     public delegate void PlayerEvent();
     public static event PlayerEvent PlayerDied;
+    public static event PlayerEvent PlayerWin;
 
     public delegate void SaveProgress();
     public static event SaveProgress SaveProgressData;
+
+    public delegate void PlayerScoreEvent(int score);
+    public static event PlayerScoreEvent NewScoreApplied;
+    public static event PlayerScoreEvent SetTargetPoints;
+
+    public static void OnPlayerWin()
+    {
+        PlayerWin?.Invoke();
+    }
 
     public static void OnPlayerDied()
     {
@@ -75,6 +77,16 @@ public static class PlayerEvents
     {
         SaveProgressData?.Invoke();
     }
+
+    public static void OnNewScoreApplied(int score)
+    {
+        NewScoreApplied?.Invoke(score);
+    }
+
+    public static void OnSetTargetPoints(int score)
+    {
+        SetTargetPoints?.Invoke(score);
+    }
 }
 
 public static class ObjectPoolEvents
@@ -84,6 +96,21 @@ public static class ObjectPoolEvents
 
     public delegate void ObstaclePoolEvent(GameObject obstacle);
     public static event ObstaclePoolEvent ReturnObstacleToPool;
+
+    public delegate void VFXSpawnEvent(Vector2 position);
+    public static event VFXSpawnEvent SpawnParticle;
+    public delegate void VFXReturnEvent(GameObject particle);
+    public static event VFXReturnEvent ReturnVFXObstacle;
+
+    public static void OnSpawnParticle(Vector2 position)
+    {
+        SpawnParticle?.Invoke(position);
+    }
+
+    public static void OnReturnParticle(GameObject particle)
+    {
+        ReturnVFXObstacle?.Invoke(particle);
+    }
 
     public static void OnReturnBulletToPool(GameObject bullet)
     {

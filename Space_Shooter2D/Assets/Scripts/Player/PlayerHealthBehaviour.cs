@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UniRx;
+using UniRx.Triggers;
 
 public class PlayerHealthBehaviour : MonoBehaviour
 {
@@ -14,8 +16,25 @@ public class PlayerHealthBehaviour : MonoBehaviour
 
     private void Start()
     {
+        InitializePlayerHealth();
+        CreateTriggerStream();
+    }
+
+    private void InitializePlayerHealth()
+    {
         _currentHealthCount = _healthData.PlayerMaxHealth;
         HUDEvents.OnUpdateHealthHUD(_currentHealthCount);
+    }
+
+    private void CreateTriggerStream()
+    {
+        this.OnTriggerEnter2DAsObservable().Where(collision => collision.CompareTag(ObstacleTag)).Subscribe(collision => TriggerCollisionWithObstacle(collision)).AddTo(this);
+    }
+
+    private void TriggerCollisionWithObstacle(Collider2D collision)
+    {
+        DecreaseHealthCount();
+        ObjectPoolEvents.OnReturnObstacleToPool(collision.gameObject);
     }
 
     private void DecreaseHealthCount()
@@ -29,15 +48,6 @@ public class PlayerHealthBehaviour : MonoBehaviour
         else
         {
             PlayerEvents.OnPlayerDied();
-        }
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag(ObstacleTag))
-        {
-            DecreaseHealthCount();
-            ObjectPoolEvents.OnReturnObstacleToPool(collision.gameObject);
         }
     }
 }

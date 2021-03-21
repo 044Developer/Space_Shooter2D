@@ -15,13 +15,12 @@ public class LevelInfoData
     private string _levelObjective;
     [SerializeField]
     private int _pointsNeeded;
-    [SerializeField]
-    private bool _isOpened;
 
     public int CurrentPointsCount { get; set; }
+    public int PointsNeeded { get => _pointsNeeded; }
     public int LevelID { get => _levelID; }
     public string LevelName { get => _levelName; }
-    public bool IsOpened { get => _isOpened = CurrentPointsCount == _pointsNeeded; }
+    public bool IsOpened { get; set; }
 
     public void DisplayButtonName(TextMeshProUGUI buttonName)
     {

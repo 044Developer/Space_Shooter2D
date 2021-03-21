@@ -1,14 +1,20 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using UniRx;
 using UnityEngine;
 
 public class PlayerShootBehaviour : MonoBehaviour
 {
+    private const int LeftMouseClick = 0;
+
     [SerializeField]
     private PlayerShootData _shootData;
 
     private PlayerShootController _shootController;
     private Queue<GameObject> _bulletsPool = new Queue<GameObject>();
+
+    private DateTimeOffset _lastFired;
 
     private void OnEnable()
     {
@@ -20,7 +26,30 @@ public class PlayerShootBehaviour : MonoBehaviour
         ObjectPoolEvents.ReturnBulletToPool += ReturnBulletToPool;
     }
 
+    private void Awake()
+    {
+        InitializeComponents();
+    }
+
     private void Start()
+    {
+        CreateInputStream();
+    }
+
+    private void CreateInputStream()
+    {
+        Observable.EveryUpdate()
+            .Where(_ => Input.GetMouseButtonDown(LeftMouseClick))
+            .Timestamp()
+            .Where(x => x.Timestamp > _lastFired.AddSeconds(_shootData.PlayerShootRate))
+            .Subscribe(x =>
+            {
+                _shootController.ShootBullet(_bulletsPool);
+                _lastFired = x.Timestamp;
+            }).AddTo(this);
+    }
+
+    private void InitializeComponents()
     {
         InitializeBulletPool();
         _shootController = new PlayerShootController(_shootData);
@@ -28,19 +57,12 @@ public class PlayerShootBehaviour : MonoBehaviour
 
     private void InitializeBulletPool()
     {
+        _bulletsPool.Clear();
         for (int i = 0; i < _shootData.BulletPoolCount; i++)
         {
             GameObject bullet = Instantiate(_shootData.BulletPrefab, _shootData.BulletsPoolHolder);
             bullet.SetActive(false);
             _bulletsPool.Enqueue(bullet);
-        }
-    }
-
-    private void Update()
-    {
-        if (_shootController.CanShoot() && Input.GetMouseButtonDown(0))
-        {
-            _shootController.ShootBullet(_bulletsPool);
         }
     }
 

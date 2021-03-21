@@ -11,6 +11,7 @@ public class ScoreController
     private Camera _camera;
     private ScoreHUDData _scoreData;
     private int _scoreCount = 0;
+
     public ScoreController(ScoreHUDData scoreData)
     {
         _scoreData = scoreData;
@@ -18,7 +19,7 @@ public class ScoreController
         InitializeScoreText();
     }
 
-    public void AnimateScore(Vector3 scoreSpawnPoint, ref Queue<Image> scorePool)
+    public void AnimateScore(Vector3 scoreSpawnPoint, Queue<Image> scorePool)
     {
         var position = _camera.WorldToScreenPoint(scoreSpawnPoint);
 
@@ -34,6 +35,7 @@ public class ScoreController
 
     private void CreateAnimationSequence(Image image, RectTransform target, Queue<Image> pool)
     {
+
         Sequence animationSequence = DOTween.Sequence();
 
         animationSequence.Append(image.rectTransform.DOPunchScale(_scoreData.GrowScaleSize, _scoreData.ScaleAnimationDuration))

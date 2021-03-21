@@ -16,7 +16,7 @@ public class PlayerShootData
 
     [Header("Bullet Values")]
     [SerializeField]
-    private float _playerShootRate;
+    private int _playerShootRate;
     [SerializeField]
     private Transform _playerShootPosition;
 
